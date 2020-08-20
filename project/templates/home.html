@@ -1,0 +1,40 @@
+<!doctype html>
+<head>
+    {% include 'partials/header.html' %}
+</head>
+
+<body>
+  <div class="container">
+    <div class="row align-items-center justify-content-center mt-5" id="nameInput">
+      <div class="col-8 col-sm-6 text-center">
+        <h1>Mind Game</h1>
+        <p>First Time Playing? See <a href="/rules">Rules</a></p>
+        <div class="mt-4">
+          <form id="nameForm" method="POST" action="{{redirect}}">
+            <div class="input-group justify-content-center flex-column">
+              <div>
+                <input type="text" class="form-control mb-2" name="uname" id ="uname" placeholder="Enter a username" maxlength="30" required/>
+              </div>
+              <input id="nameSubmit" type="submit" value="Enter" class="btn btn-dark">
+            </div>
+          </form>
+        </div>
+        <footer class="fixed-bottom">
+            This game is an adaption of The Mind from Pandasaurus Games
+        </footer>
+      </div>
+    </div>
+  </div>
+  
+  <script>
+    // https://stackoverflow.com/questions/19024825/not-allow-a-blank-character-space-in-a-input-form
+    $(function() {
+      $('#uname').on('keypress', function(e) {
+        if ( !((e.which <= 90 && e.which >= 65) || (e.which <= 122 && e.which >= 97) || e.which == 13)) {
+          console.log('Space detected');
+          return false;
+        }
+      })
+    })
+  </script>
+</body>

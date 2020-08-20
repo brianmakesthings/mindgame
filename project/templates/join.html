@@ -1,0 +1,33 @@
+<!doctype html>
+<head>
+    {% include 'partials/header.html' %}
+</head>
+
+<body>
+  <div class="container">
+    <div class="row align-items-center justify-content-center mt-5" id="nameInput">
+      <div class="col-8 col-sm-6 text-center">
+        <h1>Mind Game</h1>
+        <h2>Hello, {{uname}}!</h2>
+        <div class="mt-4">
+            <form id="roomForm" method="POST" action="createRoom">
+                <div class="input-group justify-content-center flex-column">
+                  <input id="createSubmit" type="submit" value="Create a Room" class="btn btn-dark">
+                </div>
+              </form>
+        </div>
+        <hr>
+        <div class="mt-4">
+          <form id="roomForm" method="POST" action="searchRoom">
+            <div class="input-group justify-content-center flex-column">
+              <div>
+                <input type="number" class="form-control mb-2" name="roomNum" placeholder="Enter a room number" required/>
+              </div>
+              <input id="joinSubmit" type="submit" value="Join" class="btn btn-dark">
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>

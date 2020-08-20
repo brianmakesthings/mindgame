@@ -1,0 +1,91 @@
+<!doctype html>
+<head>
+    {% include 'partials/header.html' %}
+    <!-- socket.io CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+</head>
+
+<body>
+  <div class="container">
+    <div class="row align-items-center justify-content-center mt-5">
+      <div class="col-8 col-sm-6 text-center" id="mainContent">
+        <h1 id="level">Level {{level}}</h1>
+        <h2 id="lives">Lives {{lives}}</h2>
+        <p>{{userId}} has cards</p>
+        <div id="cards">
+          {% for state in playerState %}
+          {% if state[0] == userId %} 
+            {% for card in state[1] %}
+              <div class="btn btn-lg btn-dark mt-4" onclick="playCard(this)" data-value="{{card}}">
+                {{card}}
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endfor %}
+        </div>
+        <div class="col-xs-12" style="height:50px;"></div>
+        <h4>Last Card Played Was: </h4>
+        <div id="lastPlayedInfo"></div>
+      </div>
+    </div>
+    
+  </div>
+ 
+  <script type="text/javascript" charset="utf-8">
+    var socket = io.connect('http://' + document.domain + ':' + location.port,
+                            { 'sync disconnect on unload': true });
+    socket.on( 'connect', function() {
+      socket.emit( 'userConnect', {
+        userId: "{{ userId }}",
+        roomId: "{{ roomNum }}"
+      } )
+    });
+    function playCard(card) {
+      socket.emit('playCard', {
+        userId: "{{userId}}",
+        roomId: "{{roomNum}}",
+        card: card.getAttribute('data-value')
+      });
+    }
+    socket.on("leaveResponse", (participants, owner) => {
+      window.location.replace(`/join`)
+    })
+    socket.on('playCardResponse', (card, lives, level, playerState, moveResult) => {
+      console.log(card)
+      $('#lives').html(`Lives ${lives}`)
+      $('#level').html(`Level ${level}`)
+      $('#lastPlayedInfo').html(`<h2>${card}</h2>`)
+
+      for (player of playerState) {
+        if (player[0] === "{{userId}}") {
+          let cardData = ``
+          console.log(player[1][0])
+          if (player[1][0] !== "") {
+            for (card of player[1]) {
+            cardData += `<div class="btn btn-lg btn-dark mt-4" onclick="playCard(this)" data-value="${card}">
+                ${card}
+              </div>
+              `
+            }
+          } else {
+            cardData = "<h3>no more cards left to play</h3>"
+          }
+          $('#cards').html(cardData)
+        }
+      }
+      switch(moveResult) {
+        case "gameNext":
+          $('#lastPlayedInfo').html('');
+          break;
+        case "gameLose":
+          $('#mainContent').html('<h1>You Lost!</h1><a href="/join">Click Here To Play Again</a>');
+          break;
+        case "gameWin":
+          $('#mainContent').html('<h1>You Win!</h1><a href="/join">Click Here To Play Again</a>');
+          // server should automatically delete game from memory
+          break;
+      }
+      
+    })
+  </script>
+</body>

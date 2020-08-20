@@ -1,0 +1,136 @@
+<!doctype html>
+<head>
+    {% include 'partials/header.html' %}
+    <!-- socket.io CDN -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <!-- Bootstrap table -->
+    <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.css">
+    <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
+
+</head>
+
+<body>
+  <div class="container">
+    <div class="row align-items-center justify-content-center mt-5" id="nameInput">
+      <div class="col-8 col-sm-6 text-center">
+        <!-- <div id="error"><h3 style="color: red">{{error}}</h3></div> -->
+        <h1>Mind Game</h1>
+        <h2>Room #: {{ roomNum }}</h2>
+        <button class="btn btn-dark" onclick="copyInvite()" style="margin:10px" id="inviteLink">Invite Link</button>
+        <table class="table table-striped" id="parTable" data-toggle="table">
+            
+            
+        </table>
+        <div id="startGame">
+          {% if userId == owner %}
+          <form action="../startgame/{{roomNum}}" method="post" onsubmit = "return verifyPlayers(event);">
+              <input type="submit" class="btn btn-dark mt-4" value="Start Game" />
+          </form>
+          {% else %}
+          <h3 class="mt-4">Please wait for the host to start the game.</h3>
+          {% endif %}
+        </div>
+        
+      </div>
+    </div>
+  </div>
+
+
+  <script type="text/javascript" charset="utf-8">
+    function copyInvite() {
+      let inviteLink = window.location.href;
+      inviteLink = inviteLink.replace("lobby", "invite");
+      navigator.clipboard.writeText(inviteLink);
+      document.getElementById("inviteLink").className = "btn btn-light";
+      document.getElementById("inviteLink").innerHTML = "Copied!";
+    }
+    var $table = $('#parTable');
+    var socket = io.connect('http://' + document.domain + ':' + location.port,
+                            { 'sync disconnect on unload': true });
+
+    let numOfParticipants = 0;
+
+    socket.on( 'connect', () => {
+      socket.emit( 'userConnect', {
+        userId: "{{ userId }}",
+        roomId: "{{ roomNum }}"
+      } )
+    });
+    // socket.on( 'disconnect', () => {
+    //   socket.emit( 'userDisconnect', {
+    //     userId: "{{ userId }}",
+    //     roomId: "{{ roomNum }}"
+    //   } )
+    // });
+    socket.on( 'connectResponse', function( participants, owner ) {
+      console.log("{{userId}}")
+      console.log(participants)
+      if (!(participants.includes("{{userId}}"))) {
+        window.location.replace("/join")
+      }
+      console.log( owner )
+      let innerTable = `
+      <thread>
+          <tr>
+              <th scope='col' data-field="name">Name</th>
+      `;
+      if ("{{userId}}" === owner) {
+        innerTable += `<th scope='col' data-field="kick">Kick</th>`;
+      }
+      innerTable += `
+        </tr>
+      </thread>
+      <tbody>
+      `;
+      console.log(participants)
+      numOfParticipants = participants.length;
+      for (participant of participants) {
+        if (participant === "{{owner}}") {
+          innerTable += '<tr><td>' + participant + ' (👑)</td></tr>'
+        } else {
+          innerTable += '<tr><td>' + participant + '</td>'
+          if ("{{ userId }}" === owner) {
+             innerTable += `<td onclick=kickUser("${participant}")>❌</td>`
+          }
+          innerTable +=`</tr>`
+        }
+      }
+
+      innerTable += '</tbody>'
+
+      $table.html(innerTable)
+    });
+    // socket.on("leaveResponse", (participants, owner) => {
+    //   window.location.replace(`/join`)
+    // })
+    // function startGame() {
+    //   socket.emit("startGame")
+    // }
+    socket.on('startGame', (room) => {
+      window.location.replace(`/game/${room}`)
+    });
+    // socket.on('error', (error) => {
+    //   $('#error').html(`<h1>Error ${error} </h1>`);
+    // })
+    function kickUser(participant) {
+      console.log(participant)
+      socket.emit("kickUser", {
+        userId: participant,
+        roomId: "{{roomNum}}"
+      })
+    }
+
+    function verifyPlayers() {
+      if (numOfParticipants > 4) {
+        window.alert("Too Many Participants")
+        return false;
+      } else if (numOfParticipants < 2) {
+        window.alert("Too Few Participants")
+        return false;
+      } else {
+        return true;
+      }
+    }
+  </script>
+
+</body>
