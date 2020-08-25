@@ -14,8 +14,8 @@
         <p>{{userId}} has cards</p>
         <div id="cards">
           {% for state in playerState %}
-          {% if state[0] == userId %} 
-            {% for card in state[1] %}
+          {% if state["id"] == userId %} 
+            {% for card in state["cards"] %}
               <div class="btn btn-lg btn-dark mt-4" onclick="playCard(this)" data-value="{{card}}">
                 {{card}}
               </div>
