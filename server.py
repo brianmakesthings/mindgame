@@ -3,7 +3,6 @@ from flask_socketio import SocketIO, send, emit, join_room, leave_room
 import engineio
 import datetime
 from markupsafe import escape
-import pika
 import uuid
 import json
 import re
