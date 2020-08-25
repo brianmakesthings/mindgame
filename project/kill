@@ -1,5 +1,0 @@
-#!/bin/bash
-killall -9 go
-killall -9 flask
-killall -9 amqp_server
-killall -9 python3
