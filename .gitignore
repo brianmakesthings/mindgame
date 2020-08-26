@@ -11,3 +11,5 @@ log/*
 project/src/github.com/
 
 node_modules
+
+venv/
