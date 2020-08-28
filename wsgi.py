@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+from flask_talisman import Talisman
 import engineio
 import datetime
 from markupsafe import escape
@@ -9,6 +10,7 @@ import re
 import game
 
 app = Flask(__name__)
+
 app.secret_key = b"ikkO\xb8\xca\xec\xa8.\xb0|':\xee\xafM"
 app.config['SECRET_KEY'] = b'\xdf\x18u\xdb-\xd1\xf0BBv\x1c\xbbf\xa8i\x9b'
 
@@ -76,6 +78,11 @@ def kickUser(json, methods=['GET', 'POST']):
     participantData = game.getParticipants(int(room))
     join_room(room)
     emit('connectResponse', participantData, room=room)
+
+@socketio.on('restart')
+def restart(json, methods=['Get', 'POST']):
+    room = int(json["roomId"])
+    # game.restart(room)
 
 # @socketio.on('disconnect')
 # def on_leave():
@@ -167,14 +174,8 @@ def searchRoom():
 def lobby(roomNum):
     if 'username' not in session:
         return redirect('/')
-    # response = rpc.call({'request' : 'getParticipants', 'roomId' : str(roomNum)})
-    # if "error" in response:
-    #     return "error: " + response["error"]
     participantData = game.getParticipants(roomNum)
     print(participantData)
-    # participants = response["participants"][1:-1].split(" ")
-    # print(participants)
-    # isOwner = (session["id"] == response["owner"])
     return render_template('lobby.html', roomNum=escape(str(roomNum)), userId=session['id'], participants=participantData[0], owner=participantData[1], error="")
 
 

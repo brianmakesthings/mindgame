@@ -3,7 +3,7 @@ import random
 
 userIds = {}
 rooms = {}
-maxLevel = 3
+maxLevel = 10
 
 class room:
     def __init__(self, ownerId, roomId):

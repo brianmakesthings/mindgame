@@ -47,6 +47,11 @@
         card: card.getAttribute('data-value')
       });
     }
+    function restart(room) {
+      socket.emit('restart', {
+        roomId: "{{roomNum}}"
+      })
+    }
     socket.on("leaveResponse", (participants, owner) => {
       window.location.replace(`/join`)
     })
