@@ -10,7 +10,7 @@ import re
 import game
 
 app = Flask(__name__)
-
+Talisman(app)
 app.secret_key = b"ikkO\xb8\xca\xec\xa8.\xb0|':\xee\xafM"
 app.config['SECRET_KEY'] = b'\xdf\x18u\xdb-\xd1\xf0BBv\x1c\xbbf\xa8i\x9b'
 
@@ -40,9 +40,6 @@ def userConnect(json, methods=['GET', 'POST']):
     print('received my event: ' + str(json))
     room = str(json["roomId"])
     session['room'] = room
-    # response = rpc.call({'request' : 'getParticipants', 'roomId' : room})
-    # if "error" in response:
-    #     return "error: " + response["error"]
     participantData = game.getParticipants(room)
     join_room(room)
     emit('connectResponse', participantData, room=room)
@@ -82,7 +79,7 @@ def kickUser(json, methods=['GET', 'POST']):
 @socketio.on('restart')
 def restart(json, methods=['Get', 'POST']):
     room = int(json["roomId"])
-    # game.restart(room)
+    game.restart(room)
 
 # @socketio.on('disconnect')
 # def on_leave():

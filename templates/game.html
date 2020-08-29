@@ -83,10 +83,10 @@
           $('#lastPlayedInfo').html('');
           break;
         case "gameLose":
-          $('#mainContent').html('<h1>You Lost!</h1><a href="/join">Click Here To Play Again</a>');
+          $('#mainContent').html('<h1>You Lost!</h1><a href="/lobby/{{roomNum}}">Click Here To Play Again</a>');
           break;
         case "gameWin":
-          $('#mainContent').html('<h1>You Win!</h1><a href="/join">Click Here To Play Again</a>');
+          $('#mainContent').html('<h1>You Win!</h1><a href="/lobby/{{roomNum}}">Click Here To Play Again</a>');
           // server should automatically delete game from memory
           break;
       }

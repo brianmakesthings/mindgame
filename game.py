@@ -115,8 +115,10 @@ def playCard(roomId, userId, card):
     moveResult = rooms[roomId].playCard(userId, int(card))
     gameState = getGameState(roomId)
     gameState["moveResult"] = moveResult
-    if moveResult == "gameWin" or moveResult =="gameLose":
-        rooms.pop(roomId)
+    # Probably bad to comment out
+    # if moveResult == "gameWin" or moveResult =="gameLose":
+    #     # How to handle this
+    #     rooms.pop(roomId)
     return gameState
 
 def removeUser(roomId, userId):
@@ -138,3 +140,6 @@ def getGameState(roomId):
     for player in room.players:
         player.cards.sort()
     return {"lives" : room.lives, "level" : room.level, "playerState" : room.players}
+
+def restart(roomId):
+    return rooms[int(roomId)].startGame()
