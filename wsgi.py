@@ -9,8 +9,18 @@ import json
 import re
 import game
 
+
+csp = {
+    'default-src': [
+        '\'self\'',
+        'stackpath.bootstrapcdn.com',
+        'code.jquery.com',
+        'cdn.jsdelivr.net',
+        'unpkg.com'
+    ]
+}
 app = Flask(__name__)
-Talisman(app)
+Talisman(app, content_security_policy=csp)
 app.secret_key = b"ikkO\xb8\xca\xec\xa8.\xb0|':\xee\xafM"
 app.config['SECRET_KEY'] = b'\xdf\x18u\xdb-\xd1\xf0BBv\x1c\xbbf\xa8i\x9b'
 
