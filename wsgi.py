@@ -16,7 +16,8 @@ csp = {
         'stackpath.bootstrapcdn.com',
         'code.jquery.com',
         'cdn.jsdelivr.net',
-        'unpkg.com'
+        'unpkg.com',
+        'cdnjs.cloudflare.com'
     ]
 }
 app = Flask(__name__)
