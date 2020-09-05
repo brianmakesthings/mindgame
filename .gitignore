@@ -13,3 +13,5 @@ project/src/github.com/
 node_modules
 
 venv/
+
+.env

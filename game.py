@@ -1,5 +1,11 @@
 import os, struct
 import random
+import psycopg2
+from dotenv import load_dotenv
+load_dotenv()
+
+conn = psycopg2.connect(os.getenv("DATABASE_CONN_STRING"))
+cur = conn.cursor()
 
 userIds = {}
 rooms = {}
