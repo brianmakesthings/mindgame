@@ -90,29 +90,41 @@ class playerData:
 def generateUserId(username):
     idGenerated = False
     idCandidate = ""
+    cur.execute('SELECT id FROM players')
+    dbUsers= cur.fetchall()
     while (not idGenerated):
         randInt = struct.unpack('I', os.urandom(4))[0] % 1000000
         idCandidate = username + str(randInt)
-        if (idCandidate not in userIds):
-            userIds[idCandidate] = username
+        if (idCandidate not in dbUsers):
+            cur.execute("INSERT INTO players (id) VALUES('{}');".format(idCandidate))
+            conn.commit()
             idGenerated = True
     return idCandidate
 
 def createRoom(ownerId):
+    cur.execute('SELECT id FROM rooms')
+    dbRooms = cur.fetchall()
+    print(rooms)
     idGenerated = False
     randInt = 0
     while (not idGenerated):
         randInt = struct.unpack('I', os.urandom(4))[0] % 1000000
-        if (randInt not in rooms):
-            rooms[randInt] = room(ownerId, randInt)
+        if (randInt not in dbRooms):
+            cur.execute("INSERT INTO rooms (id, owner, lives, level) VALUES({}, '{}', 0, 0)".format(randInt, ownerId))
+            cur.execute("INSERT INTO in_game VALUES({}, '{}')".format(randInt, ownerId))
+            conn.commit()
             idGenerated = True
     return randInt
 
 def getParticipants(roomId):
-    print(rooms)
-    result = ([],rooms[int(roomId)].owner)
-    for player in rooms[int(roomId)].players:
-        result[0].append(player.id)
+    cur.execute("SELECT player FROM in_game WHERE roomId={};".format(int(roomId)))
+    players = cur.fetchall()
+    cur.execute("SELECT owner FROM rooms WHERE id={};".format(int(roomId)))
+    owner = cur.fetchall()[0][0]
+    result = ([], owner)
+    for player in players:
+        result[0].append(player[0])
+    print("Result is", result)
     return result
 
 
@@ -128,15 +140,23 @@ def playCard(roomId, userId, card):
     return gameState
 
 def removeUser(roomId, userId):
-    for player in rooms[roomId].players:
-        if player.id == userId:
-            rooms[roomId].players.remove(player)
-            return "success"
+    cur.execute("SELECT player FROM in_game WHERE roomId={}".format(int(roomId)))
+    players = cor.fetchall()
+    if userId in players:
+        return "success"
     return "no such player found"
-
+    
 def joinRoom(userId, roomId):
-    print(rooms)
-    return rooms[int(roomId)].joinRoom(userId)
+    cur.execute("SELECT * FROM in_game WHERE roomId={}".format(int(roomId)))
+    players = cur.fetchall();
+    if len(players) >= 4:
+        return "Room is Full"
+    if userId in players:
+        return "Player already in room"
+    cur.execute("INSERT INTO in_game (roomId, player) VALUES({}, '{}');".format(int(roomId), userId))
+    conn.commit()
+    return "Success"
+
 
 def startGame(roomId):
     return rooms[int(roomId)].startGame()
