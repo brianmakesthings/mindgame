@@ -132,7 +132,6 @@ def invite(roomNum):
         id = game.generateUserId(username)
         session['username'] = username
         session['id'] = id
-        session['id'] = response['id']
     else:
         if 'id' not in session:
             return render_template('home.html', redirect="/invite/%d" % roomNum)
