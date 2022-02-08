@@ -54,10 +54,10 @@ Handles communication between the client and the Python server. Game input, serv
 - Share a link to your lobby so your friends can join
 
 # Screenshots
-<img src="/uploads/fbdc8306641d0b5fd34102c81f6218e2/image.png"  width="800">
-<br>
-<img src="/uploads/73498defab287103bc5d96c09b1d19d1/Screenshot_20200816-234253_Chrome.jpg"  width="240">
-<img src="/uploads/caaf6f67827561441d34d18d38548cf4/Screenshot_20200816-234347_Chrome.jpg "  width="240">  
+<img src="https://user-images.githubusercontent.com/56088070/153068949-d7243c9a-9b14-493e-9767-005a205730f0.png">
+<img src="https://user-images.githubusercontent.com/56088070/153068969-1170b278-14d0-472f-8464-f2a482fd855a.png" width=160>
+<img src="https://user-images.githubusercontent.com/56088070/153069000-47cfc049-14cb-4908-ad61-4dbb924c3854.png" width=160>
+
 
 # Reference/Disclaimer
 Design language of project is very similar to my CMPT 276 group project. I did use some of the same boostrap classes.  
