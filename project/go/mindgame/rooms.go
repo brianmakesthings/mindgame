@@ -6,24 +6,24 @@ import (
 )
 
 type RoomInfo struct {
-	owner string
+	owner        string
 	participants []string
-	status  string
-	gameData GameInfo
+	status       string
+	gameData     GameInfo
 }
 
 var maxLevel = 10
 
-func (r *RoomInfo) StartRound (level int) {
+func (r *RoomInfo) StartRound(level int) {
 	data := GameInfo{}
 	data.lives = r.gameData.lives
 	data.level = level
-	var dealtCards []int 
-	for val := range selectN(len(r.participants)*level) {
+	var dealtCards []int
+	for val := range selectN(len(r.participants) * level) {
 		dealtCards = append(dealtCards, val)
 	}
 	for i, val := range r.participants {
-		data.players = append(data.players, Player{val, dealtCards[i*level:(i+1)*level]})
+		data.players = append(data.players, Player{val, dealtCards[i*level : (i+1)*level]})
 	}
 	r.gameData = data
 }
@@ -36,7 +36,7 @@ func (r *RoomInfo) StartGame() {
 
 func (r *RoomInfo) PlayCard(userId, card string) string {
 	data := GameInfo{}
-	data.lives= r.gameData.lives
+	data.lives = r.gameData.lives
 	data.level = r.gameData.level
 	data.players = r.gameData.players
 	data.playedCards = r.gameData.playedCards
@@ -46,7 +46,7 @@ func (r *RoomInfo) PlayCard(userId, card string) string {
 	if err != nil {
 		panic("error converting card to int")
 	}
-	data.playedCards = append(data.playedCards,cardInt)
+	data.playedCards = append(data.playedCards, cardInt)
 	for i, player := range data.players {
 		var toRemove []int
 		for j, card := range player.cards {
@@ -59,20 +59,20 @@ func (r *RoomInfo) PlayCard(userId, card string) string {
 				} else {
 					toRemove = append(toRemove, j)
 				}
-			} 
+			}
 		}
 		if len(toRemove) > 0 {
 			data.players[i].cards = RemoveFromSlice(toRemove, player.cards)
 		}
 	}
-	
+
 	if cardInt == correctCard {
 		hasPassedLevel := hasPassedLevel(r.gameData.players)
 		if hasPassedLevel {
-			if (data.level+1 > maxLevel) {
+			if data.level+1 > maxLevel {
 				return "gameWin"
 			}
-			r.StartRound(data.level+1)
+			r.StartRound(data.level + 1)
 			// r.gameData = data
 			return "gameNext"
 		} else {
@@ -86,7 +86,7 @@ func (r *RoomInfo) PlayCard(userId, card string) string {
 				if card <= cardInt {
 					// remove the card
 					println(j)
-					toRemove = append(toRemove, j)					
+					toRemove = append(toRemove, j)
 				}
 			}
 			if len(toRemove) > 0 {
@@ -100,12 +100,12 @@ func (r *RoomInfo) PlayCard(userId, card string) string {
 		} else {
 			hasPassedLevel := hasPassedLevel(r.gameData.players)
 			if hasPassedLevel {
-				if (data.level+1 > maxLevel) {
+				if data.level+1 > maxLevel {
 					return "gameWin"
 				}
 				r.gameData = data
 				fmt.Printf("Game Data Fail: %v\n", r.gameData)
-				r.StartRound(data.level+1)
+				r.StartRound(data.level + 1)
 				return "gameNext"
 			}
 			r.gameData = data
@@ -118,12 +118,12 @@ func (r *RoomInfo) RemoveUser(userId string) string {
 	for i, val := range r.participants {
 		if val == userId {
 			r.participants = RemoveFromStringSlice([]int{i}, r.participants)
-			break;
+			break
 		}
 	}
 	if userId == r.owner {
 		if len(r.participants) <= 0 {
-			return "delete";
+			return "delete"
 		} else {
 			r.owner = r.participants[0]
 		}
@@ -133,7 +133,7 @@ func (r *RoomInfo) RemoveUser(userId string) string {
 		for i, val := range data.players {
 			if val.id == userId {
 				data.players = RemoveFromPlayerSlice([]int{i}, data.players)
-				break;
+				break
 			}
 		}
 		r.gameData = data

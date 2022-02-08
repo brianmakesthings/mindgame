@@ -1,0 +1,32 @@
+version: "3.9"
+services:
+  # flask:
+  #   build: ./project/flask
+  #   ports:
+  #     - "5000:8080"
+  #   links:
+  #     - rabbitmq
+  #   depends_on:
+  #     - rabbitmq
+  #   restart: on-failure
+  # go:
+  #   build: ./project/go
+  #   depends_on:
+  #     - rabbitmq
+  #   links:
+  #     - rabbitmq
+  #   restart: on-failure
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+      - "15672:15672"
+      - "5672:5672"
+    # healthcheck:
+    #   test: ["CMD", "curl", "-f", "http://localhost:15672"]
+    #   interval: 30s
+    #   timeout: 10s
+    #   retries: 5
+
+networks:
+  rabbitmq_go_net:
+    driver: bridge
