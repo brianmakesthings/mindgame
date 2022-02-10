@@ -12,7 +12,7 @@ type RoomInfo struct {
 	gameData     GameInfo
 }
 
-var maxLevel = 10
+var maxLevel = 3
 
 func (r *RoomInfo) StartRound(level int) {
 	data := GameInfo{}

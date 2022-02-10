@@ -11,7 +11,7 @@ import re
 
 # python3 amqp_client.py
 # based on https://www.rabbitmq.com/tutorials/tutorial-six-python.html
-class DemoRpcClient(object):
+class RpcClient(object):
     def __init__(self):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', heartbeat=12000))
         self.channel = self.connection.channel()
@@ -46,7 +46,7 @@ app = Flask(__name__)
 app.secret_key = b"ikkO\xb8\xca\xec\xa8.\xb0|':\xee\xafM"
 app.config['SECRET_KEY'] = b'\xdf\x18u\xdb-\xd1\xf0BBv\x1c\xbbf\xa8i\x9b'
 
-rpc = DemoRpcClient()
+rpc = RpcClient()
 socketio = SocketIO(app)
 
 # https://stackoverflow.com/questions/40972805/python-capture-contents-inside-curly-braces
@@ -62,7 +62,7 @@ def extractPlayerState(playerState):
         if "" in matches[i][1]:
             matches[i][1].remove("")
         matches[i][1].sort(key=int)
-        # extrach card values
+        # extract card values
     print(matches)
     return matches
     
