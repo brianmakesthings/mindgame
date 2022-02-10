@@ -2,7 +2,7 @@
 <head>
     {% include 'partials/header.html' %}
     <!-- socket.io CDN -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.3.0/socket.io.js"></script>
+    <script src="https://cdn.socket.io/4.4.1/socket.io.min.js" integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H" crossorigin="anonymous"></script>
     <!-- Bootstrap table -->
     <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.css">
     <script src="https://unpkg.com/bootstrap-table@1.17.1/dist/bootstrap-table.min.js"></script>
@@ -100,9 +100,9 @@
 
       $table.html(innerTable)
     });
-    // socket.on("leaveResponse", (participants, owner) => {
-    //   window.location.replace(`/join`)
-    // })
+    socket.on("leaveResponse", (participants, owner) => {
+      window.location.replace(`/join`)
+    })
     // function startGame() {
     //   socket.emit("startGame")
     // }

@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session
+from flask import Flask, render_template, request, redirect, url_for, session, send_from_directory
 from flask_socketio import SocketIO, send, emit, join_room, leave_room
+import os
 import engineio
 import datetime
 from markupsafe import escape
@@ -10,7 +11,7 @@ import re
 
 # python3 amqp_client.py
 # based on https://www.rabbitmq.com/tutorials/tutorial-six-python.html
-class DemoRpcClient(object):
+class RpcClient(object):
     def __init__(self):
         self.connection = pika.BlockingConnection(pika.ConnectionParameters(host='localhost', heartbeat=12000))
         self.channel = self.connection.channel()
@@ -45,7 +46,7 @@ app = Flask(__name__)
 app.secret_key = b"ikkO\xb8\xca\xec\xa8.\xb0|':\xee\xafM"
 app.config['SECRET_KEY'] = b'\xdf\x18u\xdb-\xd1\xf0BBv\x1c\xbbf\xa8i\x9b'
 
-rpc = DemoRpcClient()
+rpc = RpcClient()
 socketio = SocketIO(app)
 
 # https://stackoverflow.com/questions/40972805/python-capture-contents-inside-curly-braces
@@ -61,7 +62,7 @@ def extractPlayerState(playerState):
         if "" in matches[i][1]:
             matches[i][1].remove("")
         matches[i][1].sort(key=int)
-        # extrach card values
+        # extract card values
     print(matches)
     return matches
     
@@ -100,7 +101,9 @@ def playCard(json, methods=['GET', 'POST']):
     userId = str(json["userId"])
     card = str(json["card"])
     response = rpc.call({'request' : 'playCard', 'roomId' : room, 'userId' : userId, 'card' : card})
-    print(response)
+    if not response:
+        print("ERROR PLAYING CARD")
+        return
     playerState = extractPlayerState(response["playerState"])
     emit('playCardResponse', (card, response['lives'], response['level'], playerState, response["moveResult"] ), room=room)
 
@@ -245,9 +248,14 @@ def load_game(roomNum):
                             lives = response['lives'], level = response['level'], 
                             playerState = playerState )
 
+@app.route('/favicon.ico')
+def favicon():
+    return send_from_directory(os.path.join(app.root_path, 'static'), 'favicon.ico')
+
 
 
 
 if __name__ == '__main__':
+    # socketio.init_app(app, cors_allowed_origins="*")
     socketio.run(app, host='0.0.0.0', port=5000)
     

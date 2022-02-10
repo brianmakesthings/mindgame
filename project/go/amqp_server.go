@@ -5,9 +5,10 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/streadway/amqp"
 	"log"
-	"mindgame"
+	"mindgame_go/mindgame"
+
+	"github.com/streadway/amqp"
 )
 
 func failOnError(err error, msg string) {
@@ -32,7 +33,7 @@ func main() {
 		"rpc_queue", // name
 		false,       // durable
 		false,       // delete when unused
-		true,       // exclusive
+		true,        // exclusive
 		false,       // no-wait
 		nil,         // arguments
 	)
@@ -73,7 +74,7 @@ func main() {
 				response = mindgame.GenerateUserId(request, &userIds)
 			case "createRoom":
 				response = mindgame.CreateRoom(request, &rooms)
-			case "joinRoom" :
+			case "joinRoom":
 				response = mindgame.JoinRoom(request, &rooms)
 			case "getParticipants":
 				response = mindgame.GetParticipants(request, &rooms)
@@ -81,7 +82,7 @@ func main() {
 				response = mindgame.StartGame(request, &rooms)
 			case "getGameState":
 				response = mindgame.GetGameState(request, &rooms)
-			case "playCard" :
+			case "playCard":
 				response = mindgame.PlayCard(request, &rooms)
 			case "removeUser":
 				response = mindgame.RemoveUser(request, &rooms)
@@ -92,7 +93,7 @@ func main() {
 			// case "popSid" :
 			// 	resposne = PopSid(request, &sids)
 			default:
-				response = map[string]string{"error" : "could not determine request"}
+				response = map[string]string{"error": "could not determine request"}
 			}
 			log.Printf("%s", response)
 			body, _ := json.Marshal(response)
